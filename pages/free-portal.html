@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, viewport-fit=cover">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- The hero is a CSS background, so the browser only finds it after the CSS
+         parses — and it is this page's LCP element. Start it with the HTML. -->
+    <link rel="preload" as="image" href="../assets/free-portal-hero.webp" fetchpriority="high">
+    <meta name="theme-color" content="#003B46">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta property="og:title" content="פורטל הלמידה של בית המטפלים — הכשרת NLP Practitioner">
+    <meta property="og:description" content="קורס NLP Practitioner מלא לצפייה ישירה בחינם — 51+ סרטונים, 20+ שעות למידה. קבלו גישה לפורטל לימודים בשווי 7,200 ש״ח">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.therapist-home.com/pages/free-portal.html">
+    <meta property="og:image" content="https://www.therapist-home.com/assets/logo.png">
+    <meta property="og:locale" content="he_IL">
+    
+    <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon-180.png">
+    <title>פורטל הלמידה של בית המטפלים | הכשרת NLP Practitioner</title>
+    <meta name="description" content="קורס NLP Practitioner מלא לצפייה ישירה בחינם — 51+ סרטונים, 20+ שעות למידה. קבלו גישה לפורטל לימודים בשווי 7,200 ש״ח">
+
+    
+
+    <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+
+    <!-- Capture ?ref= param BEFORE auth redirect -->
+    <script>
+        (function(){try{var p=new URLSearchParams(location.search);var r=p.get('ref');
+        if(r&&r.length>10)localStorage.setItem('referrer_data',JSON.stringify({referrer_id:r,captured_at:Date.now()}));
+        }catch(e){}})();
+    </script>
+
+    <!-- Early auth redirect -->
+    
+    <script src="../js/demo-mock.js"></script>
+<script src="../js/demo-data.js"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script>
+        (async function() {
+            try {
+                const sb = window.supabase.createClient(window.SUPABASE_CONFIG.url, window.SUPABASE_CONFIG.anonKey);
+                const { data: { session } } = await sb.auth.getSession();
+                if (session?.user) {
+                    let done = localStorage.getItem('portal_questionnaire_done');
+                    if (!done) {
+                        // admin/paid_customer never fill the lead questionnaire — let them through
+                        try {
+                            const { data: profile } = await sb.from('profiles').select('role').eq('id', session.user.id).single();
+                            if (profile && (profile.role === 'admin' || profile.role === 'paid_customer')) done = true;
+                        } catch (e2) {}
+                    }
+                    var dest = done ? 'course-library-v2.html' : 'portal-questionnaire.html';
+                    var ref = new URLSearchParams(location.search).get('ref');
+                    if (ref) dest += (dest.includes('?') ? '&' : '?') + 'ref=' + encodeURIComponent(ref);
+                    window.location.href = dest;
+                }
+            } catch (e) {}
+        })();
+    </script>
+
+    <link rel="stylesheet" href="../css/accessibility.css">
+
+    <style>
+    /* ================================================================
+       DESIGN TOKENS — from colors_and_type.css (beit-hametaplim-design-system)
+       ================================================================ */
+    :root {
+      --deep-petrol:   #003B46;
+      --muted-teal:    #00606B;
+      --dusty-aqua:    #2F8592;
+      --frost-white:   #E8F1F2;
+      --gold:          #D4AF37;
+      --gold-light:    #E6C65A;
+      --gold-glow:     rgba(212,175,55,0.25);
+      --gradient-gold: linear-gradient(135deg,#D4AF37 0%,#E6C65A 100%);
+      --font-display:  'Frank Ruhl Libre', 'Noto Serif Hebrew', Georgia, serif;
+      --font-body:     'Heebo', -apple-system, 'Segoe UI', Arial, sans-serif;
+      --fs-xs:         0.8rem;
+      --lh-tight:      1.1;
+      --lh-relaxed:    1.85;
+      --tracking-tight: -0.02em;
+      --tracking-eyebrow: 0.15em;
+      --ease-out:      cubic-bezier(0.16,1,0.3,1);
+      --t-fast:        0.2s;
+      --t-base:        0.3s;
+      /* ── motion pass tokens ── */
+      --ease-standard:   cubic-bezier(.2,0,0,1);
+      --ease-decelerate: cubic-bezier(.16,1,.3,1);
+      --ease-accelerate: cubic-bezier(.4,0,1,1);
+      --ease-emphasis:   cubic-bezier(.34,1.4,.5,1);
+      --ease-anticipate: cubic-bezier(.5,-0.35,.7,.45);
+      --dur-1: .12s; --dur-2: .2s; --dur-3: .32s; --dur-4: .5s; --dur-5: .7s;
+      --stagger: 60ms;
+    }
+
+    /* ================================================================
+       BASE RESET
+       ================================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; direction: rtl; }
+    body {
+      font-family: var(--font-body);
+      background: #04161b;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    @supports (padding-bottom: env(safe-area-inset-bottom)) {
+      body { padding-bottom: env(safe-area-inset-bottom); }
+    }
+    input, button, select, textarea {
+      -webkit-appearance: none; appearance: none;
+      font-size: 16px; touch-action: manipulation;
+    }
+    button { -webkit-tap-highlight-color: transparent; cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ================================================================
+       ATMOSPHERIC BACKGROUND — copied exactly from signup.html
+       ================================================================ */
+    .atmos {
+      position: fixed; inset: 0; overflow: hidden;
+      pointer-events: none; z-index: 0;
+    }
+    .atmos__base {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 12% 8%,  rgba(230,198,90,.15),  transparent 50%),
+        radial-gradient(ellipse at 88% 92%, rgba(47,133,146,.32),  transparent 55%),
+        radial-gradient(ellipse at 78% 18%, rgba(63,170,187,.16),  transparent 45%),
+        radial-gradient(ellipse at 22% 78%, rgba(139,75,12,.20),   transparent 50%),
+        linear-gradient(160deg, #041d22 0%, #062831 38%, #0a3d48 78%, #0d4a56 100%);
+    }
+    .atmos__blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(120px); mix-blend-mode: screen; will-change: transform;
+    }
+    .atmos__blob--a {
+      width: 540px; height: 540px; background: #E6C65A; opacity: .28;
+      top: -160px; inset-inline-end: -160px;
+      animation: floatA 26s ease-in-out infinite;
+    }
+    .atmos__blob--b {
+      width: 480px; height: 480px; background: #2F8592; opacity: .4;
+      bottom: -180px; inset-inline-start: -150px;
+      animation: floatB 32s ease-in-out infinite;
+    }
+    .atmos__blob--c {
+      width: 360px; height: 360px; background: #3FAABB; opacity: .2;
+      top: 38%; inset-inline-start: 42%;
+      animation: floatC 38s ease-in-out infinite;
+    }
+    .atmos__blob--d {
+      width: 300px; height: 300px; background: #D4AF37; opacity: .15;
+      top: 62%; inset-inline-end: 22%;
+      animation: floatD 28s ease-in-out infinite;
+    }
+    @keyframes floatA { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-50px,40px) scale(1.08)} }
+    @keyframes floatB { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(60px,-40px) scale(1.06)} }
+    @keyframes floatC { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-70px,-50px) scale(1.12)} }
+    @keyframes floatD { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,60px) scale(.92)} }
+    .atmos__grid {
+      position: absolute; inset: 0; opacity: .05; mix-blend-mode: overlay;
+      background-image:
+        linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    }
+    .atmos__grain {
+      position: absolute; inset: 0; opacity: .042; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/></svg>");
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .atmos__blob { animation: none !important; }
+      .fp-hero__eyebrow, .fp-hero__h1, .fp-hero__sub,
+      .fp-hero__stats, .fp-hero__cta {
+        animation: none !important; opacity: 1 !important; transform: none !important;
+      }
+      .fp-hero__cta:hover, .fp-hero__cta:active,
+      .fp-feature-card:hover, .fp-audience-card:hover,
+      .sg-btn-primary:hover:not(:disabled), .sg-btn-primary:active:not(:disabled) {
+        transform: none !important;
+      }
+      [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+    }
+
+    /* ================================================================
+       GLASS CARD — copied exactly from signup.html (.sg-card)
+       ================================================================ */
+    .sg-card {
+      width: 100%; max-width: 440px;
+      border-radius: 28px;
+      background: rgba(255,255,255,.075);
+      backdrop-filter: blur(42px) saturate(180%);
+      -webkit-backdrop-filter: blur(42px) saturate(180%);
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow:
+        0 32px 80px rgba(0,0,0,.42),
+        0 8px 20px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.14),
+        inset 0 0 0 1px rgba(255,255,255,.06);
+      padding: 2.5rem 2rem 2.25rem;
+      position: relative; isolation: isolate;
+    }
+    .sg-card::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,.04) 24%, transparent 52%);
+    }
+    .sg-card::after {
+      content: '';
+      position: absolute; top: 0; inset-inline: 0; height: 1px;
+      border-radius: 28px 28px 0 0;
+      background: linear-gradient(90deg,
+        transparent 0%, rgba(212,175,55,.55) 35%, rgba(230,198,90,.8) 50%,
+        rgba(212,175,55,.55) 65%, transparent 100%);
+    }
+    @media (prefers-reduced-transparency: reduce) {
+      .sg-card { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: rgba(10,40,46,.95) !important; }
+    }
+
+    /* ================================================================
+       FORM ELEMENTS — copied exactly from signup.html
+       ================================================================ */
+    .sg-field { margin-bottom: 1.05rem; }
+    .sg-label {
+      display: block; margin-bottom: .42rem;
+      font-size: .78rem; font-weight: 600;
+      color: rgba(255,255,255,.48);
+      letter-spacing: .03em; text-transform: uppercase;
+      font-family: var(--font-body);
+    }
+    .sg-input {
+      width: 100%; padding: .88rem 1rem;
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px; color: #fff;
+      font-family: var(--font-body); font-size: .95rem;
+      font-weight: 400; line-height: 1.4;
+      transition: border-color var(--t-fast) var(--ease-out),
+                  background var(--t-fast) var(--ease-out),
+                  box-shadow var(--t-fast) var(--ease-out);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .sg-input:focus {
+      outline: none;
+      border-color: rgba(212,175,55,.55);
+      background: rgba(255,255,255,.09);
+      box-shadow: 0 0 0 3px rgba(212,175,55,.14);
+    }
+    .sg-input::placeholder { color: rgba(255,255,255,.2); }
+
+    /* PRIMARY BUTTON — copied exactly from signup.html */
+    .sg-btn-primary {
+      width: 100%; padding: 1rem 1.5rem; border: none;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #E6C65A 0%, #D4A437 100%);
+      color: #1a1205; font-family: var(--font-body);
+      font-size: 1rem; font-weight: 800; letter-spacing: -.01em;
+      display: flex; align-items: center; justify-content: center; gap: .55rem;
+      position: relative; isolation: isolate; overflow: hidden;
+      box-shadow:
+        0 10px 26px rgba(212,164,55,.38),
+        inset 0 1px 0 rgba(255,255,255,.46),
+        inset 0 -2px 0 rgba(0,0,0,.06);
+      transition: transform var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
+    }
+    .sg-btn-primary::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.45), transparent 50%);
+      pointer-events: none;
+    }
+    .sg-btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(212,164,55,.48), inset 0 1px 0 rgba(255,255,255,.52);
+    }
+    .sg-btn-primary:active:not(:disabled) { transform: translateY(0) scale(.97); }
+    .sg-btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ALERTS — copied exactly from signup.html */
+    .sg-alert {
+      display: none; align-items: flex-start; gap: .6rem;
+      padding: .85rem 1rem; border-radius: 12px; margin-bottom: 1.1rem;
+      font-size: .84rem; font-family: var(--font-body);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      animation: alertIn .2s ease both;
+    }
+    .sg-alert.show { display: flex; }
+    .sg-alert--error {
+      background: rgba(248,81,73,.1); border: 1px solid rgba(248,81,73,.28); color: #fca5a5;
+    }
+    .sg-alert--success {
+      background: rgba(0,184,148,.08); border: 1px solid rgba(0,184,148,.26); color: #6ee7b7;
+    }
+    .sg-alert i { margin-top: 1px; flex-shrink: 0; font-size: .85rem; }
+    @keyframes alertIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+
+    /* SPINNER — copied exactly from signup.html */
+    .sg-spinner {
+      display: none; width: 18px; height: 18px;
+      border: 2.5px solid rgba(26,18,5,.25); border-top-color: #1a1205;
+      border-radius: 50%; animation: spin .65s linear infinite; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* TRUST BAR — copied exactly from signup.html */
+    .sg-trust {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.25rem; flex-wrap: wrap; max-width: 440px; width: 100%;
+    }
+    .sg-trust__item {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .74rem; color: rgba(255,255,255,.32); font-family: var(--font-body);
+    }
+    .sg-trust__item i { font-size: .7rem; color: rgba(212,175,55,.55); }
+
+    /* TERMS CHECKBOX */
+    .sg-terms-label {
+      display: flex; align-items: flex-start; gap: .65rem;
+      font-size: .82rem; color: rgba(255,255,255,.45); cursor: pointer; line-height: 1.5;
+    }
+    .sg-terms-label input[type="checkbox"] {
+      width: 18px; height: 18px; margin-top: 3px; flex-shrink: 0; cursor: pointer;
+      -webkit-appearance: none; appearance: none;
+      background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.22);
+      border-radius: 5px; position: relative; touch-action: manipulation;
+      transition: border-color .2s, background .2s;
+    }
+    .sg-terms-label input[type="checkbox"]:checked {
+      background: var(--gold); border-color: var(--gold);
+    }
+    .sg-terms-label input[type="checkbox"]:checked::after {
+      content: '\2713'; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%); color: #1a1205; font-size: 11px; font-weight: 700;
+    }
+    .sg-terms-label a { color: var(--gold-light); text-decoration: underline; }
+
+    /* TURNSTILE */
+    #turnstile-container { margin: .75rem 0; display: flex; justify-content: center; }
+
+    /* LOGIN LINK */
+    .sg-login-link {
+      margin-top: 1.25rem; padding-top: 1.1rem;
+      border-top: 1px solid rgba(255,255,255,.08);
+      text-align: center; font-size: .82rem; color: rgba(255,255,255,.32);
+    }
+    .sg-login-link a { color: var(--gold-light); font-weight: 600; }
+    .sg-login-link a:hover { color: #fff; }
+
+    /* ================================================================
+       NAVBAR — glass overlay
+       ================================================================ */
+    .nav-glass {
+      position: fixed; top: 0; inset-inline: 0; z-index: 100;
+      height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem;
+      background: rgba(4,22,27,.6);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border-bottom: 1px solid rgba(255,255,255,.09);
+    }
+    .nav-glass__logo { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
+    .nav-glass__logo img { height: 38px; width: auto; }
+    .nav-glass__links {
+      display: flex; align-items: center; gap: 1.75rem; list-style: none;
+    }
+    .nav-glass__links a {
+      font-size: .88rem; font-weight: 500; color: rgba(255,255,255,.6);
+      transition: color var(--t-fast); white-space: nowrap;
+    }
+    .nav-glass__links a:hover, .nav-glass__links a.active { color: #fff; }
+    .nav-glass__cta {
+      padding: .5rem 1.2rem; border-radius: 10px;
+      background: rgba(212,175,55,.15); border: 1px solid rgba(212,175,55,.35);
+      color: var(--gold-light); font-size: .85rem; font-weight: 700;
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+    .nav-glass__cta:hover { background: rgba(212,175,55,.28); color: #fff; }
+    .nav-glass__mobile-btn {
+      display: none; background: none; border: none; color: rgba(255,255,255,.7);
+      font-size: 1.2rem; padding: .5rem;
+    }
+    @media (max-width: 768px) {
+      .nav-glass__links { display: none; }
+      .nav-glass__cta { display: none; }
+      .nav-glass__mobile-btn { display: block; }
+      .nav-glass { padding: 0 1.25rem; }
+    }
+
+    /* ================================================================
+       PAGE LAYOUT
+       ================================================================ */
+    .fp-page { position: relative; z-index: 1; }
+
+    /* ================================================================
+       HERO SECTION
+       ================================================================ */
+    .fp-hero {
+      min-height: 92vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 9rem 1.5rem 5rem;
+      position: relative;
+    }
+    /* subtle hero image */
+    .fp-hero__img-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      background: url('../assets/free-portal-hero.webp') center/cover no-repeat;
+      opacity: .08; filter: saturate(.4);
+    }
+    .fp-hero__content {
+      position: relative; z-index: 2; max-width: 760px; margin: 0 auto;
+    }
+
+    /* eyebrow badge — same language as sg-card gold line */
+    .fp-hero__eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(212,175,55,.08);
+      border: 1px solid rgba(212,175,55,.38);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-radius: 50px; padding: .45rem 1.4rem;
+      font-size: .82rem; font-family: var(--font-body); color: var(--gold-light);
+      margin-bottom: 1.8rem;
+      opacity: 0; animation: heroRise var(--dur-4) var(--ease-decelerate) .05s both;
+    }
+
+    .fp-hero__h1 {
+      font-family: var(--font-display); font-size: clamp(2.2rem,5.5vw,3.5rem);
+      font-weight: 900; color: #fff; line-height: 1.15;
+      letter-spacing: var(--tracking-tight); margin-bottom: 1.4rem;
+      opacity: 0; animation: heroRise var(--dur-4) var(--ease-decelerate) .14s both;
+    }
+    .fp-hero__h1 .gold { color: var(--gold-light); }
+
+    .fp-hero__sub {
+      font-size: 1.05rem; color: rgba(255,255,255,.7); line-height: 1.85;
+      max-width: 620px; margin: 0 auto 2.6rem;
+      opacity: 0; animation: heroRise var(--dur-4) var(--ease-decelerate) .26s both;
+    }
+
+    /* Glass stats bar — same glass language as .sg-card */
+    .fp-hero__stats {
+      display: inline-flex; align-items: center; gap: 1.5rem;
+      background: rgba(255,255,255,.065);
+      backdrop-filter: blur(32px) saturate(160%);
+      -webkit-backdrop-filter: blur(32px) saturate(160%);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 18px; padding: 1.1rem 2.2rem; margin-bottom: 2.4rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.12);
+      opacity: 0; animation: heroRise var(--dur-4) var(--ease-decelerate) .38s both;
+    }
+    .fp-hero__stat { display: flex; flex-direction: column; align-items: center; gap: .2rem; }
+    .fp-hero__stat-n {
+      font-family: var(--font-display); font-size: 1.75rem; font-weight: 900;
+      color: var(--gold-light); line-height: 1;
+    }
+    .fp-hero__stat-l { font-size: .76rem; color: rgba(255,255,255,.55); white-space: nowrap; }
+    .fp-hero__stat-div { width: 1px; height: 38px; background: rgba(212,175,55,.22); }
+
+    /* CTA — same as .sg-btn-primary but inline */
+    .fp-hero__cta {
+      display: inline-flex; align-items: center; gap: .65rem;
+      background: linear-gradient(180deg, #E6C65A 0%, #D4A437 100%);
+      color: #1a1205; font-family: var(--font-body); font-weight: 800; font-size: 1.05rem;
+      padding: 1rem 2.6rem; border-radius: 14px; text-decoration: none;
+      box-shadow: 0 10px 26px rgba(212,164,55,.38), inset 0 1px 0 rgba(255,255,255,.46);
+      transition: transform var(--dur-2) var(--ease-emphasis), box-shadow var(--dur-2) var(--ease-standard);
+      opacity: 0; animation: heroRise var(--dur-4) var(--ease-decelerate) .5s both,
+                            ctaGlow 3.6s ease-in-out 1.4s infinite;
+    }
+    .fp-hero__cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 32px rgba(212,164,55,.48), inset 0 1px 0 rgba(255,255,255,.52);
+      color: #1a1205;
+    }
+    .fp-hero__cta:active { transform: translateY(0) scale(.97); }
+
+    @keyframes heroRise {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes ctaGlow {
+      0%, 100% { box-shadow: 0 10px 26px rgba(212,164,55,.38), inset 0 1px 0 rgba(255,255,255,.46); }
+      50%      { box-shadow: 0 12px 34px rgba(212,164,55,.6), 0 0 22px rgba(230,198,90,.35), inset 0 1px 0 rgba(255,255,255,.5); }
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(24px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ================================================================
+       SECTION SEPARATOR
+       ================================================================ */
+    .fp-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,.25), transparent);
+    }
+
+    /* ================================================================
+       FEATURES SECTION
+       ================================================================ */
+    .fp-features { padding: 6rem 2rem; }
+    .fp-section-inner { max-width: 1040px; margin: 0 auto; }
+    .fp-section-header { text-align: center; margin-bottom: 3rem; }
+    .fp-eyebrow {
+      font-size: .74rem; font-weight: 700; letter-spacing: var(--tracking-eyebrow);
+      text-transform: uppercase; color: rgba(47,133,146,.85); margin-bottom: .6rem;
+    }
+    .fp-section-header h2 {
+      font-family: var(--font-display); font-size: clamp(1.8rem,4vw,2.6rem);
+      font-weight: 700; color: #fff; line-height: 1.2;
+    }
+
+    /* Feature cards — glass, same radius/border language as .sg-card */
+    .fp-features-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1.1rem;
+    }
+    .fp-feature-card {
+      background: rgba(255,255,255,.055);
+      backdrop-filter: blur(32px) saturate(160%);
+      -webkit-backdrop-filter: blur(32px) saturate(160%);
+      border: 1px solid rgba(255,255,255,.14);
+      border-top: 1px solid rgba(212,175,55,.22);
+      border-radius: 20px; padding: 1.8rem 1.6rem;
+      position: relative; isolation: isolate;
+      transition: transform var(--dur-2) var(--ease-standard),
+                  box-shadow var(--dur-2) var(--ease-standard), border-top-color var(--dur-2);
+      box-shadow: 0 4px 24px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .fp-feature-card::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+      background: linear-gradient(160deg, rgba(255,255,255,.1) 0%, transparent 45%);
+    }
+    .fp-feature-card:hover {
+      transform: translateY(-3px);
+      border-top-color: rgba(212,175,55,.55);
+      box-shadow: 0 16px 44px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.1);
+    }
+    /* Highlight card — full width, slightly more prominent */
+    .fp-feature-card--highlight {
+      grid-column: 1/-1;
+      display: grid; grid-template-columns: auto 1fr; gap: 0 1.5rem; align-items: center;
+      background: rgba(212,175,55,.055);
+      border-top-color: rgba(212,175,55,.45);
+    }
+    .fp-feature-card--highlight .fp-feature-icon {
+      grid-row: 1/3; width: 64px; height: 64px; font-size: 1.5rem; margin-bottom: 0;
+    }
+    .fp-feature-card--highlight h3 { font-size: 1.15rem; margin-bottom: .2rem; }
+
+    .fp-feature-icon {
+      width: 48px; height: 48px; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 1.1rem;
+    }
+    .fp-feature-icon--gold   { background: rgba(212,175,55,.14); color: var(--gold-light); }
+    .fp-feature-icon--teal   { background: rgba(47,133,146,.2);  color: #5ecbd6; }
+    .fp-feature-icon--petrol { background: rgba(0,96,107,.28);   color: #7ae3ed; }
+    .fp-feature-icon--green  { background: rgba(63,185,80,.15);  color: #72d98e; }
+
+    .fp-feature-card h3 {
+      font-family: var(--font-body); font-size: 1rem; font-weight: 700;
+      color: #fff; margin-bottom: .5rem; position: relative;
+    }
+    .fp-feature-card p {
+      font-size: .88rem; color: rgba(255,255,255,.62); line-height: 1.75; position: relative;
+    }
+
+    /* ================================================================
+       AUDIENCE SECTION
+       ================================================================ */
+    .fp-audience { padding: 6rem 2rem; }
+    .fp-audience-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.1rem; }
+    .fp-audience-card {
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(32px) saturate(160%);
+      -webkit-backdrop-filter: blur(32px) saturate(160%);
+      border: 1px solid rgba(255,255,255,.1);
+      border-top: 2px solid transparent;
+      border-radius: 20px; padding: 2.2rem 1.8rem; text-align: center;
+      position: relative; isolation: isolate;
+      transition: transform var(--dur-2) var(--ease-standard),
+                  box-shadow var(--dur-2) var(--ease-standard), border-top-color var(--dur-2);
+      box-shadow: 0 4px 20px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.07);
+    }
+    .fp-audience-card::before {
+      content: '';
+      position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+      background: linear-gradient(165deg, rgba(255,255,255,.09) 0%, transparent 50%);
+    }
+    .fp-audience-card:hover {
+      transform: translateY(-3px);
+      border-top-color: rgba(212,175,55,.5);
+      box-shadow: 0 16px 44px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.1);
+    }
+    .fp-audience-icon {
+      width: 58px; height: 58px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.35rem; margin: 0 auto 1.2rem;
+      background: rgba(212,175,55,.12); color: var(--gold-light);
+      position: relative;
+    }
+    .fp-audience-card h3 {
+      font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: .75rem; position: relative;
+    }
+    .fp-audience-card p {
+      font-size: .88rem; color: rgba(255,255,255,.62); line-height: 1.8; position: relative;
+    }
+
+    /* ================================================================
+       REGISTRATION SECTION
+       ================================================================ */
+    .fp-register { padding: 6rem 2rem; }
+    .fp-register-inner {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center;
+    }
+
+    /* Info side */
+    .fp-register-info { color: #fff; }
+    .fp-register-info h2 {
+      font-family: var(--font-display); font-size: clamp(1.6rem,4vw,2.3rem);
+      font-weight: 700; margin-bottom: 1rem; line-height: 1.25;
+    }
+    .fp-register-info > p {
+      font-size: .97rem; color: rgba(255,255,255,.7); line-height: 1.75; margin-bottom: 1.8rem;
+    }
+    .fp-steps { display: flex; flex-direction: column; gap: 1rem; }
+    .fp-step { display: flex; align-items: center; gap: 1rem; }
+    .fp-step-num {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(212,175,55,.1); border: 1px solid rgba(212,175,55,.38);
+      color: var(--gold-light); font-weight: 700; font-size: .95rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fp-step-icon {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(63,185,80,.1); border: 1px solid rgba(63,185,80,.38);
+      color: #72d98e; font-size: .85rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fp-step-text { font-size: .92rem; color: rgba(255,255,255,.75); line-height: 1.5; }
+    .fp-step--final .fp-step-text { color: #72d98e; font-weight: 600; }
+
+    /* Form card — using exact .sg-card */
+    .fp-register-card {
+      /* extends .sg-card — max-width removed for grid context */
+      max-width: none;
+    }
+    .fp-register-card h3 {
+      font-family: var(--font-display); font-size: 1.25rem; font-weight: 700;
+      color: #fff; text-align: center; margin-bottom: 1.8rem; position: relative;
+    }
+
+    /* ================================================================
+       FOOTER — glass
+       ================================================================ */
+    .fp-footer {
+      position: relative; z-index: 2;
+      background: rgba(4,22,27,.7);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .fp-footer__inner {
+      max-width: 1100px; margin: 0 auto; padding: 3.5rem 2rem 2rem;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2.5rem;
+    }
+    .fp-footer__brand { display: flex; flex-direction: column; gap: 1rem; }
+    .fp-footer__logo { display: flex; align-items: center; gap: .6rem; }
+    .fp-footer__logo img { height: 36px; width: auto; }
+    .fp-footer__brand p { font-size: .85rem; color: rgba(255,255,255,.42); line-height: 1.7; }
+    .fp-footer__col h4 {
+      font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(255,255,255,.4); margin-bottom: .9rem;
+    }
+    .fp-footer__col ul { list-style: none; display: flex; flex-direction: column; gap: .55rem; }
+    .fp-footer__col ul a { font-size: .85rem; color: rgba(255,255,255,.45); transition: color var(--t-fast); }
+    .fp-footer__col ul a:hover { color: var(--gold-light); }
+    .fp-footer__bottom {
+      border-top: 1px solid rgba(255,255,255,.06); padding: 1.25rem 2rem;
+      text-align: center; font-size: .78rem; color: rgba(255,255,255,.28);
+    }
+
+    /* ================================================================
+       SCROLL REVEAL
+       ================================================================ */
+    [data-reveal] {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity var(--dur-5) var(--ease-decelerate), transform var(--dur-5) var(--ease-decelerate);
+    }
+    [data-reveal].revealed { opacity: 1; transform: none; }
+
+    /* ================================================================
+       RESPONSIVE
+       ================================================================ */
+    @media (max-width: 768px) {
+      /* Hero: only as tall as its content — no forced 100vh that creates gap below CTA */
+      .fp-hero {
+        min-height: auto;
+        align-items: flex-start;
+        padding: calc(72px + 2rem) 1.25rem 2.5rem;
+      }
+      .fp-hero__eyebrow { margin-bottom: .9rem; font-size: .78rem; }
+      .fp-hero__h1 { font-size: clamp(1.65rem,6.5vw,2.2rem); margin-bottom: .9rem; }
+      /* Truncate long subtitle to 3 lines so CTA stays in view */
+      .fp-hero__sub {
+        font-size: .9rem; margin-bottom: 1.4rem;
+        display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .fp-hero__stats { gap: .9rem; padding: .85rem 1.4rem; margin-bottom: 1.4rem; }
+      .fp-hero__stat-n { font-size: 1.3rem; }
+      .fp-hero__stat-div { height: 30px; }
+      .fp-hero__cta { width: 100%; max-width: 340px; justify-content: center; font-size: .97rem; }
+      .fp-features, .fp-audience, .fp-register { padding: 4.5rem 1.25rem; }
+      .fp-features-grid { grid-template-columns: 1fr; }
+      .fp-feature-card--highlight { grid-template-columns: 1fr; text-align: center; }
+      .fp-feature-card--highlight .fp-feature-icon { grid-row: auto; margin: 0 auto 1rem; }
+      .fp-audience-grid { grid-template-columns: 1fr; }
+      .fp-register-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .fp-register-info h2 { text-align: center; }
+      .fp-register-info > p { text-align: center; }
+      .fp-steps { max-width: 340px; margin: 0 auto; }
+      .fp-footer__inner { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .fp-hero { padding: calc(72px + 1.5rem) 1rem 2.5rem; }
+      .fp-hero__h1 { font-size: 1.55rem; }
+      .fp-hero__sub { font-size: .86rem; -webkit-line-clamp: 3; margin-bottom: 1.2rem; }
+      .fp-hero__stats { gap: .6rem; padding: .75rem .9rem; margin-bottom: 1.2rem; flex-wrap: wrap; justify-content: center; }
+      .fp-hero__stat-n { font-size: 1.15rem; }
+      .fp-hero__stat-div { height: 24px; }
+      .fp-hero__cta { padding: .9rem 1.5rem; font-size: .93rem; }
+      .fp-features, .fp-audience, .fp-register { padding: 3.5rem 1rem; }
+      .fp-feature-card { padding: 1.5rem 1.3rem; }
+      .fp-audience-card { padding: 1.8rem 1.4rem; }
+      .sg-card { padding: 2rem 1.5rem; border-radius: 22px; }
+      .fp-footer__inner { grid-template-columns: 1fr; padding: 2.5rem 1.25rem 1.5rem; }
+    }
+    </style>
+
+<!-- ═══ PWA · בית המטפלים · נוסף 2026-08-29 ═══ -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/pwa/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/pwa/favicon-16.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="בית המטפלים">
+
+<!-- 28.10.2026: install-prompt.js removed here on purpose (Hillel). On the signup/login pages the add-to-home-screen sheet covered the register button. It still runs inside the portal. -->
+<meta name="robots" content="noindex,nofollow">
+<style>
+.dm-fp-table{display:grid;grid-template-columns:1fr 1fr;max-width:860px;margin:0 auto;border-radius:20px;overflow:hidden;border:1px solid rgba(233,185,73,.3);background:rgba(16,54,56,.6)}
+.dm-fp-col{padding:1.5rem 1.4rem;min-width:0}
+.dm-fp-col--paid{background:rgba(233,185,73,.07);border-inline-start:1px solid rgba(233,185,73,.25)}
+.dm-fp-col h3{margin:0 0 1rem;font-size:1.15rem;display:flex;gap:.5rem;align-items:center;color:#fff}
+.dm-fp-col--free h3 i{color:#4ADE80}.dm-fp-col--paid h3 i{color:#F2C766}
+.dm-fp-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.9rem}
+.dm-fp-col li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:.6rem;line-height:1.45;color:#F4F1EA;text-align:right}
+.dm-fp-col--free li i{color:#4ADE80;margin-top:.25rem}.dm-fp-col--paid li i{color:#F2C766;margin-top:.25rem}
+.dm-fp-col small{display:block;color:#B7C4C2;font-size:.88rem;margin-top:.15rem}
+.dm-fp-col b{color:#fff}
+@media (max-width:640px){.dm-fp-table{grid-template-columns:1fr}.dm-fp-col--paid{border-inline-start:0;border-top:1px solid rgba(233,185,73,.25)}}
+</style>
+</head>
+<body>
+
+<!-- ATMOSPHERIC BACKGROUND — exact from signup.html -->
+<div class="atmos" aria-hidden="true">
+  <div class="atmos__base"></div>
+  <div class="atmos__blob atmos__blob--a"></div>
+  <div class="atmos__blob atmos__blob--b"></div>
+  <div class="atmos__blob atmos__blob--c"></div>
+  <div class="atmos__blob atmos__blob--d"></div>
+  <div class="atmos__grid"></div>
+  <div class="atmos__grain"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="nav-glass" aria-label="ניווט ראשי">
+  <a href="../index.html" class="nav-glass__logo">
+    <img src="../assets/logo.png" alt="בית המטפלים">
+  </a>
+  <ul class="nav-glass__links">
+    <li><a href="../index.html">דף הבית</a></li>
+    <li><a href="about.html">אודות</a></li>
+    <li><a href="free-portal.html" class="active">קורס בחינם</a></li>
+  </ul>
+  <a href="login.html" class="nav-glass__cta">התחברות</a>
+  <button class="nav-glass__mobile-btn" id="mobileMenuBtn" aria-label="תפריט">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</nav>
+
+<div class="fp-page">
+<main id="main-content">
+
+  <!-- ══════ HERO ══════ -->
+  <section class="fp-hero">
+    <div class="fp-hero__img-bg" aria-hidden="true"></div>
+    <div class="fp-hero__content">
+      <div class="fp-hero__eyebrow">
+        <i class="fa-solid fa-play-circle"></i>
+        צפייה ישירה בחינם
+      </div>
+      <h1 class="fp-hero__h1">
+        קורס <span class="gold">NLP Practitioner</span> מלא<br>לצפייה ישירה בחינם
+      </h1>
+      <p class="fp-hero__sub">
+        קבלו גישה לפורטל לימודים בשווי 7,200 ש״ח שיתן לכם כלים בשינוי דפוסי חשיבה מגבילים ומחשבות טורדניות, התגברות על דחיינות ובניית בטחון עצמי, שיפור התקשורת שלכם עם אנשים ובני זוג וריפוי רגשות דחוסים ואמונות מעכבות מהעבר
+      </p>
+      <div class="fp-hero__stats" aria-label="נתוני הקורס">
+        <div class="fp-hero__stat">
+          <span class="fp-hero__stat-n">51+</span>
+          <span class="fp-hero__stat-l">סרטונים ערוכים</span>
+        </div>
+        <div class="fp-hero__stat-div" aria-hidden="true"></div>
+        <div class="fp-hero__stat">
+          <span class="fp-hero__stat-n">20+</span>
+          <span class="fp-hero__stat-l">שעות למידה</span>
+        </div>
+        <div class="fp-hero__stat-div" aria-hidden="true"></div>
+        <div class="fp-hero__stat">
+          <span class="fp-hero__stat-n">25,000+</span>
+          <span class="fp-hero__stat-l">צפיות בקורס</span>
+        </div>
+      </div>
+      <a href="#register" class="fp-hero__cta">
+        <i class="fa-solid fa-key"></i>
+        אני רוצה גישה לפורטל
+      </a>
+    </div>
+  </section>
+
+  <div class="fp-sep"></div>
+  <!-- ══════ DEMO: FREE vs PAID ══════ -->
+  <section class="fp-features dm-fp">
+    <div class="fp-section-inner">
+      <div class="fp-section-header">
+        <h2>מה מקבלים בחינם, ומה בתשלום</h2>
+      </div>
+      <div class="dm-fp-table">
+        <div class="dm-fp-col dm-fp-col--free">
+          <h3><i class="fa-solid fa-gift"></i> מקבלים בחינם</h3>
+          <ul>
+            <li><i class="fa-solid fa-check"></i><span>כל 51 שיעורי התיאוריה של הפרקטישנר<small>7 מודולים, כ-18.5 שעות של שיעורים</small></span></li>
+            <li><i class="fa-solid fa-check"></i><span>תרגול מלא לשיעור הראשון<small>6 תרגילים, כדי להרגיש איך זה עובד</small></span></li>
+            <li><i class="fa-solid fa-check"></i><span>נכנסים מיד, בלי כרטיס אשראי</span></li>
+          </ul>
+        </div>
+        <div class="dm-fp-col dm-fp-col--paid">
+          <h3><i class="fa-solid fa-lock"></i> בתשלום</h3>
+          <ul>
+            <li><i class="fa-solid fa-lock"></i><span>התרגולים של כל השיעורים<small>312 תרגילים, עם הסבר על כל תשובה</small></span></li>
+            <li><i class="fa-solid fa-lock"></i><span>קורס <bdi>NLP MASTER</bdi> המלא<small>אמונות ליבה, ערכים ושינוי זהות</small></span></li>
+          </ul>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:1.6rem"><a href="#register" class="fp-hero__cta"><i class="fa-solid fa-key"></i> אני רוצה גישה לפורטל</a></div>
+    </div>
+  </section>
+
+  <div class="fp-sep"></div>
+
+  <!-- ══════ FEATURES ══════ -->
+  <section class="fp-features">
+    <div class="fp-section-inner">
+      <div class="fp-section-header" data-reveal>
+        <div class="fp-eyebrow">הכל כלול בפנים</div>
+        <h2>מה מחכה לכם בתוך הפורטל?</h2>
+      </div>
+      <div class="fp-features-grid">
+
+        <!-- Highlight -->
+        <div class="fp-feature-card fp-feature-card--highlight" data-reveal data-reveal-delay="1">
+          <div class="fp-feature-icon fp-feature-icon--gold">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <h3>קורס NLP Practitioner מלא</h3>
+          <p>51 שיעורים ב-7 מודולים מלאים — מהבסיס ועד טכניקות מתקדמות. הכל ערוך, מקצועי ומוכן לצפייה.</p>
+        </div>
+
+        <div class="fp-feature-card" data-reveal data-reveal-delay="2">
+          <div class="fp-feature-icon fp-feature-icon--petrol"><i class="fa-solid fa-book-open"></i></div>
+          <h3>חוברת הקורס — 117 עמודים</h3>
+          <p>חוברת מקיפה לתרגול והטמעת התוכן, מלווה את כל השיעורים עם תרגילים ודגשים חשובים.</p>
+        </div>
+
+        <div class="fp-feature-card" data-reveal data-reveal-delay="3">
+          <div class="fp-feature-icon fp-feature-icon--teal"><i class="fa-solid fa-list-check"></i></div>
+          <h3>סיכומים לכל שיעור</h3>
+          <p>סיכומים ממוקדים שיצרנו לאנשים שאוהבים למידה מסודרת — הנקודות החשובות בצורה ברורה ונגישה.</p>
+        </div>
+
+        <div class="fp-feature-card" data-reveal data-reveal-delay="4">
+          <div class="fp-feature-icon fp-feature-icon--teal"><i class="fa-solid fa-robot"></i></div>
+          <h3>צ׳אט AI מיוחד</h3>
+          <p>יועץ AI שלמד את כל תכני הקורס לעומק — לתרגול, שיחות ושאלות בכל רגע נתון, 24/7.</p>
+        </div>
+
+        <div class="fp-feature-card" data-reveal data-reveal-delay="5">
+          <div class="fp-feature-icon fp-feature-icon--gold"><i class="fa-solid fa-gamepad"></i></div>
+          <h3>משחקי תרגול מגניבים</h3>
+          <p>מיני דואלינגו בסגנון NLP! התרגול של שיעור 1 פתוח בחינם. את התרגולים של כל השיעורים פותחים עם השלמת הפרקטישנר.</p>
+        </div>
+
+        <div class="fp-feature-card" data-reveal data-reveal-delay="6">
+          <div class="fp-feature-icon fp-feature-icon--green"><i class="fa-solid fa-pen-fancy"></i></div>
+          <h3>מחברת אישית דיגיטלית</h3>
+          <p>מערכת הערות מובנית לכתיבה וסיכומים אישיים תוך כדי צפייה, בסינכרון מלא מכל מכשיר.</p>
+        </div>
+
+        <div class="fp-feature-card" data-reveal data-reveal-delay="7">
+          <div class="fp-feature-icon fp-feature-icon--petrol"><i class="fa-solid fa-users"></i></div>
+          <h3>קהילה וסביבה מנצחת</h3>
+          <p>קהילה תומכת עם לייבים, QnA, בונוסים ותוכן בלעדי — סביבה שדוחפת קדימה ומעודדת צמיחה.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="fp-sep"></div>
+
+  <!-- ══════ AUDIENCE ══════ -->
+  <section class="fp-audience">
+    <div class="fp-section-inner">
+      <div class="fp-section-header" data-reveal>
+        <h2>למי זה מתאים?</h2>
+      </div>
+      <div class="fp-audience-grid">
+
+        <div class="fp-audience-card" data-reveal data-reveal-delay="1">
+          <div class="fp-audience-icon"><i class="fa-solid fa-seedling"></i></div>
+          <h3>לחובבי התפתחות אישית</h3>
+          <p>לאנשים שאוהבים תוכן התפתחות אישית עמוק ופרקטי ורוצים לעבור תהליך אמיתי לעצמם.</p>
+        </div>
+
+        <div class="fp-audience-card" data-reveal data-reveal-delay="2">
+          <div class="fp-audience-icon"><i class="fa-solid fa-briefcase"></i></div>
+          <h3>ליזמים ובעלי עסקים</h3>
+          <p>ללמוד ולקבל כלים שאפשר לשלב בעסק ולעבודה עם לקוחות — שכנוע, תקשורת והשפעה.</p>
+        </div>
+
+        <div class="fp-audience-card" data-reveal data-reveal-delay="3">
+          <div class="fp-audience-icon"><i class="fa-solid fa-hand-holding-heart"></i></div>
+          <h3>למי שמרגיש שלטפל זה הייעוד</h3>
+          <p>לאנשים שבא להם לקבל גישה לעולם הנפלא של הטיפול ולגלות אם זה הדבר שלהם.</p>
+        </div>
+
+        <div class="fp-audience-card" data-reveal data-reveal-delay="4">
+          <div class="fp-audience-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+          <h3>למטפלים קיימים</h3>
+          <p>להוסיף עוד כלים לארגז הכלים בקליניקה — טכניקות NLP מוכחות לעבודה עם מטופלים.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="fp-sep"></div>
+
+  <!-- ══════ REGISTRATION ══════ -->
+  <section class="fp-register" id="register">
+    <div class="fp-register-inner">
+
+      <!-- Info side -->
+      <div class="fp-register-info" data-reveal>
+        <h2>רוצים להירשם לפורטל<br>ולקבל גישה בחינם?</h2>
+        <p>תהליך ההרשמה מובנה מ-2 שלבים קצרים:</p>
+        <div class="fp-steps">
+          <div class="fp-step">
+            <div class="fp-step-num">1</div>
+            <div class="fp-step-text">מילוי הטופס כאן למטה</div>
+          </div>
+          <div class="fp-step">
+            <div class="fp-step-num">2</div>
+            <div class="fp-step-text">נכנסים ישר לשיעור הראשון</div>
+          </div>
+          <div class="fp-step fp-step--final">
+            <div class="fp-step-icon"><i class="fa-solid fa-flag-checkered"></i></div>
+            <div class="fp-step-text">קבלת גישה והתחלת מסע הלמידה שלך!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Glass form card — using exact .sg-card pattern -->
+      <div class="sg-card fp-register-card" data-reveal data-reveal-delay="2">
+        <h3>מוכנים לצאת למסע התפתחותי משנה חיים?</h3>
+
+        <div class="sg-alert sg-alert--error" id="regError" role="alert">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <span id="regErrorText">שגיאה</span>
+        </div>
+        <div class="sg-alert sg-alert--success" id="regSuccess" role="status">
+          <i class="fa-solid fa-circle-check"></i>
+          <span id="regSuccessText"></span>
+        </div>
+
+        <form id="registerForm" onsubmit="handleRegister(event)" novalidate>
+
+          <div class="sg-field">
+            <label class="sg-label" for="reg-name">שם מלא</label>
+            <input class="sg-input" type="text" id="reg-name" name="full_name"
+                   required placeholder="השם המלא שלך" autocomplete="name">
+          </div>
+
+          <div class="sg-field">
+            <label class="sg-label" for="reg-email">כתובת אימייל</label>
+            <input class="sg-input" type="email" id="reg-email" name="email"
+                   required placeholder="example@email.com" autocomplete="email" dir="ltr">
+          </div>
+
+          <div class="sg-field">
+            <label class="sg-label" for="reg-phone">מספר טלפון</label>
+            <input class="sg-input" type="tel" id="reg-phone" name="phone"
+                   required placeholder="05X-XXXXXXX" autocomplete="tel"
+                   dir="ltr" inputmode="tel" pattern="^0[2-9]\d{7,8}$"
+                   title="מספר טלפון ישראלי תקין">
+          </div>
+
+          <div class="sg-field">
+            <label class="sg-terms-label">
+              <input type="checkbox" id="reg-terms-checkbox" required>
+              <span>אני מסכים/ה ל<a href="../privacy-policy.html" target="_blank">תקנון האתר</a></span>
+            </label>
+          </div>
+
+          <div id="turnstile-container"></div>
+
+          <button type="submit" class="sg-btn-primary" id="regSubmitBtn">
+            <span class="btn-label">הרשמה לפורטל</span>
+            <div class="sg-spinner" id="regSpinner"></div>
+          </button>
+
+        </form>
+
+        <div class="sg-login-link">
+          כבר יש לך גישה? <a href="login.html">התחבר כאן</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Trust bar — exact from signup.html -->
+    <div class="sg-trust" style="margin: 2.5rem auto 0;" role="list">
+      <div class="sg-trust__item" role="listitem">
+        <i class="fa-solid fa-lock"></i>
+        <span>מאובטח ומוצפן</span>
+      </div>
+      <div class="sg-trust__item" role="listitem">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>+350 מטפלים פעילים</span>
+      </div>
+      <div class="sg-trust__item" role="listitem">
+        <i class="fa-solid fa-star"></i>
+        <span>גישה חינמית מלאה</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="fp-footer">
+  <div class="fp-footer__inner">
+    <div class="fp-footer__brand">
+      <div class="fp-footer__logo">
+        <img src="../assets/logo-square.png" alt="בית המטפלים">
+      </div>
+      <p>בית ספר מקצועי להכשרת מטפלים מוסמכים<br>בשיטת NLP</p>
+    </div>
+    <div class="fp-footer__col">
+      <h4>תוכן חינמי</h4>
+      <ul><li><a href="course-library.html">פורטל הקורסים</a></li></ul>
+    </div>
+    <div class="fp-footer__col">
+      <h4>החברה</h4>
+      <ul>
+        <li><a href="about.html">מי אנחנו</a></li>
+      </ul>
+    </div>
+    <div class="fp-footer__col">
+      <h4>משפטי</h4>
+      <ul>
+        <li><a href="../privacy-policy.html">מדיניות פרטיות</a></li>
+        <li><a href="accessibility.html">הצהרת נגישות</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="fp-footer__bottom">
+    <p>&copy; 2026 בית המטפלים. כל הזכויות שמורות.</p>
+  </div>
+</footer>
+
+</div><!-- /.fp-page -->
+
+<script src="../js/supabase-client.js"></script>
+<script src="../js/marketing-tools.js" defer></script>
+<script>
+    // Force scroll to top (Instagram/FB in-app browser fix)
+    if (window.location.hash !== '#register' || document.referrer.includes('instagram') || document.referrer.includes('facebook') || new URLSearchParams(window.location.search).has('fbclid')) {
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+        window.scrollTo(0, 0);
+    }
+    setTimeout(() => window.scrollTo(0, 0), 100);
+
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('[data-reveal]');
+    if (revealEls.length) {
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const delay = e.target.dataset.revealDelay || 0;
+                    e.target.style.transitionDelay = (delay * 0.1) + 's';
+                    e.target.classList.add('revealed');
+                    obs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        revealEls.forEach(el => obs.observe(el));
+    }
+
+    // Pass UTM to course-library links
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const utmKeys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+        const utmParams = new URLSearchParams();
+        utmKeys.forEach(k => { if (params.get(k)) utmParams.set(k, params.get(k)); });
+        if (utmParams.toString()) {
+            document.querySelectorAll('a[href*="course-library"]').forEach(a => {
+                const sep = a.href.includes('?') ? '&' : '?';
+                a.href = a.href + sep + utmParams.toString();
+            });
+        }
+    })();
+
+    // Turnstile
+    window.onloadTurnstileCallback = function() {
+        const siteKey = window.SUPABASE_CONFIG?.turnstileSiteKey;
+        if (!siteKey) return;
+        const container = document.getElementById('turnstile-container');
+        if (container) turnstile.render(container, { sitekey: siteKey, appearance: 'interaction-only', theme: 'dark' });
+    };
+    function getTurnstileToken() {
+        if (typeof turnstile === 'undefined') return null;
+        const c = document.getElementById('turnstile-container');
+        return c ? turnstile.getResponse(c) : null;
+    }
+
+    // Registration form
+    function showRegError(msg) {
+        document.getElementById('regErrorText').textContent = msg;
+        document.getElementById('regError').classList.add('show');
+        document.getElementById('regSuccess').classList.remove('show');
+    }
+    function showRegSuccess(msg) {
+        document.getElementById('regSuccessText').textContent = msg;
+        document.getElementById('regSuccess').classList.add('show');
+        document.getElementById('regError').classList.remove('show');
+    }
+    function setRegLoading(loading) {
+        const btn = document.getElementById('regSubmitBtn');
+        const spinner = document.getElementById('regSpinner');
+        btn.disabled = loading;
+        spinner.style.display = loading ? 'block' : 'none';
+        btn.querySelector('.btn-label').textContent = loading ? 'נרשם...' : 'הרשמה לפורטל';
+    }
+
+    function generateSecurePassword() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+        const arr = new Uint8Array(24);
+        crypto.getRandomValues(arr);
+        return Array.from(arr, b => chars[b % chars.length]).join('');
+    }
+
+    async function handleRegister(e) {
+        e.preventDefault();
+        if (typeof supabaseClient === 'undefined') return;
+
+        const fullName = document.getElementById('reg-name').value.trim();
+        const email    = document.getElementById('reg-email').value.trim();
+        const phone    = document.getElementById('reg-phone').value.trim().replace(/[-\s]/g, '');
+
+        if (!fullName || !email || !phone) { showRegError('נא למלא את כל השדות'); return; }
+        if (!/^0[2-9]\d{7,8}$/.test(phone)) {
+            showRegError('נא להזין מספר טלפון ישראלי תקין (למשל: 0541234567)');
+            return;
+        }
+        const turnstileToken = getTurnstileToken();
+        if (!turnstileToken) { showRegError('נא לאמת שאתה לא רובוט'); return; }
+
+        document.getElementById('regError').classList.remove('show');
+        setRegLoading(true);
+
+        try {
+            const autoPassword = generateSecurePassword();
+            const { data, error } = await supabaseClient.auth.signUp({
+                email, password: autoPassword,
+                options: { data: { full_name: fullName, phone } }
+            });
+            if (error) throw error;
+
+            if (data.user) {
+                await new Promise(r => setTimeout(r, 500));
+                const utm = window.getUtmData ? window.getUtmData() : {};
+                await supabaseClient.from('profiles').upsert({
+                    id: data.user.id, email, full_name: fullName, phone,
+                    // role is set by the handle_new_user DB trigger ('student_lead').
+                    // (Previously sent `roles: [...]` — a non-existent column that made
+                    //  this whole upsert fail silently, dropping the UTM attribution.)
+                    utm_source: utm.utm_source || null, utm_medium: utm.utm_medium || null,
+                    utm_campaign: utm.utm_campaign || null, utm_content: utm.utm_content || null,
+                    utm_term: utm.utm_term || null
+                }, { onConflict: 'id' });
+
+                // Transactional welcome WhatsApp — fire-and-forget, never blocks signup.
+                // Idempotent server-side (profiles.whatsapp_welcome_sent_at).
+                // keepalive: true keeps the request alive past the immediate page
+                // navigation to portal-questionnaire.html below — otherwise the
+                // browser cancels the in-flight fetch and the Edge Function never runs.
+                if (window.SUPABASE_CONFIG?.url) {
+                    try {
+                        fetch(`${window.SUPABASE_CONFIG.url}/functions/v1/enqueue-welcome`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': window.SUPABASE_CONFIG.anonKey
+                            },
+                            body: JSON.stringify({ profile_id: data.user.id }),
+                            keepalive: true
+                        }).catch(() => {});
+                    } catch (e) { /* non-critical */ }
+                }
+            }
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'generate_lead', {
+                    event_category: 'registration', event_label: 'free_portal_signup',
+                    method: 'email_form', currency: 'ILS', value: 0
+                });
+            }
+            const leadEventId = window.newCapiEventId ? window.newCapiEventId() : null;
+            if (typeof fbq === 'function' && leadEventId) {
+                fbq('track', 'Lead', { content_name: 'free_portal_signup' }, { eventID: leadEventId });
+            }
+            if (window.sendEventToCAPI && leadEventId) {
+                const utmData = window.getUtmData ? window.getUtmData() : {};
+                window.sendEventToCAPI('Lead', {
+                    email, phone,
+                    first_name: fullName.split(' ')[0] || fullName,
+                    last_name: fullName.split(' ').slice(1).join(' ') || null,
+                    external_id: data.user?.id || null
+                }, {
+                    event_id: leadEventId, content_name: 'free_portal_signup',
+                    utm_source: utmData.utm_source || null, utm_medium: utmData.utm_medium || null,
+                    utm_campaign: utmData.utm_campaign || null, utm_content: utmData.utm_content || null,
+                    utm_term: utmData.utm_term || null
+                });
+            }
+
+            if (data.session) {
+                window.location.href = 'portal-questionnaire.html';
+            } else {
+                showRegSuccess('נרשמת בהצלחה! שלחנו לך קישור לאימייל — לחצו עליו כדי להיכנס לפורטל');
+                setRegLoading(false);
+            }
+        } catch (err) {
+            console.error('Registration error:', err);
+            if (err.message && err.message.includes('already registered')) {
+                showRegError('כתובת האימייל כבר רשומה — נסו להתחבר');
+            } else {
+                showRegError('שגיאה בהרשמה — נסו שוב');
+            }
+            setRegLoading(false);
+        }
+    }
+
+    document.getElementById('reg-phone')?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('registerForm').requestSubmit(); }
+    });
+
+    // Mobile hamburger menu
+    (function() {
+        const btn = document.getElementById('mobileMenuBtn');
+        const links = document.querySelector('.nav-glass__links');
+        if (!btn || !links) return;
+
+        const mobileMenu = document.createElement('div');
+        mobileMenu.style.cssText = `
+            position: fixed; top: 72px; inset-inline: 0; z-index: 99;
+            background: rgba(4,22,27,.95); backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+            border-bottom: 1px solid rgba(255,255,255,.09);
+            padding: 1.5rem 1.5rem 2rem;
+            display: none; flex-direction: column; gap: 1.2rem;
+        `;
+        const navLinks = links.querySelectorAll('a');
+        navLinks.forEach(a => {
+            const clone = a.cloneNode(true);
+            clone.style.cssText = 'font-size: 1.05rem; font-weight: 500; color: rgba(255,255,255,.8); padding: .5rem 0; border-bottom: 1px solid rgba(255,255,255,.06); display: block;';
+            clone.addEventListener('click', () => { mobileMenu.style.display = 'none'; btn.innerHTML = '<i class="fa-solid fa-bars"></i>'; });
+            mobileMenu.appendChild(clone);
+        });
+        const ctaLink = document.createElement('a');
+        ctaLink.href = 'login.html';
+        ctaLink.textContent = 'התחברות';
+        ctaLink.style.cssText = 'display: block; text-align: center; padding: .85rem; border-radius: 10px; background: rgba(212,175,55,.15); border: 1px solid rgba(212,175,55,.35); color: #E6C65A; font-weight: 700; font-size: 1rem; margin-top: .5rem;';
+        mobileMenu.appendChild(ctaLink);
+        document.body.appendChild(mobileMenu);
+
+        btn.addEventListener('click', () => {
+            const open = mobileMenu.style.display === 'flex';
+            mobileMenu.style.display = open ? 'none' : 'flex';
+            btn.innerHTML = open ? '<i class="fa-solid fa-bars"></i>' : '<i class="fa-solid fa-xmark"></i>';
+        });
+        document.addEventListener('click', e => {
+            if (!mobileMenu.contains(e.target) && !btn.contains(e.target)) {
+                mobileMenu.style.display = 'none';
+                btn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+            }
+        });
+    })();
+</script>
+    <!-- Site Credit Footer -->
+    <style>
+      .site-credit { background: #E8F1F2; text-align: center; padding: 14px 16px; font-size: 13px; color: #003B46; border-top: 1px solid rgba(0, 59, 70, 0.08); font-family: 'Heebo', sans-serif; direction: rtl; width: 100%; box-sizing: border-box; margin: 0; }
+      .site-credit p { margin: 0; line-height: 1.6; }
+      .site-credit a { color: #003B46; text-decoration: none; font-weight: 600; }
+      .site-credit a:hover { text-decoration: underline; }
+    </style>
+    <footer class="site-credit" role="contentinfo">
+      <p>נוצר ע"י הילל אקנין · לפרויקטים: <a href="tel:+972549116092" dir="ltr">054-9116092</a></p>
+    </footer>
+  <script src="../js/demo-ui.js"></script>
+<script>
+/* DEMO: the sign-up stays in this browser and goes straight to lesson 1. */
+function handleRegister(e){
+  e.preventDefault();
+  var name=document.getElementById('reg-name').value.trim(), email=document.getElementById('reg-email').value.trim();
+  var err=document.getElementById('regError'), txt=document.getElementById('regErrorText');
+  function bad(m,el){ txt.textContent=m; err.classList.add('show'); err.style.display='flex'; if(el) el.focus(); }
+  if(!name) return bad('צריך שם מלא כדי להירשם.',document.getElementById('reg-name'));
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return bad('כתובת המייל לא נראית תקינה. בדקו שיש בה @ ונקודה.',document.getElementById('reg-email'));
+  if(!document.getElementById('reg-terms-checkbox').checked) return bad('צריך לאשר את התקנון כדי להירשם.');
+  try{ localStorage.setItem('bvmdemo_name',name.split(' ')[0]); localStorage.setItem('bvmdemo_email',email);
+       if(!localStorage.getItem('bvmdemo_signedAt')) localStorage.setItem('bvmdemo_signedAt',String(Date.now())); }catch(_){}
+  location.href='course-library.html#m1l1';
+}
+</script>
+</body>
+</html>

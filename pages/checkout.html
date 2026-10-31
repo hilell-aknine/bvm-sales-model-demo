@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>תשלום | בית המטפלים</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  /* Tokens copied from pages/course-library-v2.html :root — same portal, same look. */
+  :root{
+    --bg-primary:#0E2A2B; --bg-surface:#103638; --bg-elevated:#14464A;
+    --accent-gold:#E9B949; --accent-gold-hover:#F2C766; --accent-gold-deep:#B8941F;
+    --text-primary:#F4F1EA; --text-muted:#B7C4C2; --text-on-gold:#1A1205;
+    --success:#4ADE80; --border-subtle:rgba(255,255,255,0.08);
+    --radius-sm:8px; --radius-md:12px; --radius-lg:20px;
+    --shadow-md:0 8px 24px rgba(0,0,0,.25);
+    --font-display:'Frank Ruhl Libre','Heebo',serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg-primary);color:#fff;font-family:'Heebo',sans-serif;min-height:100vh;overflow-x:clip}
+  .atmos{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+  .atmos__base{position:absolute;inset:0;background:
+    radial-gradient(ellipse at 12% 8%, rgba(230,198,90,.16), transparent 50%),
+    radial-gradient(ellipse at 88% 92%, rgba(47,133,146,.34), transparent 55%),
+    radial-gradient(ellipse at 78% 18%, rgba(63,170,187,.18), transparent 45%),
+    radial-gradient(ellipse at 22% 78%, rgba(139,75,12,.22), transparent 50%),
+    linear-gradient(160deg, #041d22 0%, var(--bg-surface) 38%, var(--bg-elevated) 78%, #0d4a56 100%)}
+  *:focus-visible{outline:2px solid var(--accent-gold);outline-offset:2px;border-radius:var(--radius-sm)}
+  .wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:1.4rem max(16px,env(safe-area-inset-right,0px)) 4rem max(16px,env(safe-area-inset-left,0px))}
+  .top{display:flex;align-items:center;gap:.8rem;margin-bottom:1.4rem}
+  .back{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;text-decoration:none}
+  .brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:#fff;font-weight:800}
+  .brand img{width:40px;height:40px;border-radius:10px}
+  .glass{background:linear-gradient(160deg,rgba(16,54,56,.88),rgba(14,42,43,.92));border:1px solid rgba(233,185,73,.22);border-radius:22px;box-shadow:var(--shadow-md);backdrop-filter:blur(14px)}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:1.2rem;align-items:start}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .main{padding:1.6rem;display:flex;flex-direction:column;gap:1.1rem}
+  h1{margin:0;font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.1rem);line-height:1.25}
+  h1 .gold{color:var(--accent-gold-hover)}
+  .sub{margin:0;color:var(--text-muted);line-height:1.6}
+  .addon{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.8rem;align-items:center;padding:1rem 1.1rem;border-radius:16px;border:2px solid var(--accent-gold);background:rgba(233,185,73,.08);cursor:pointer}
+  .addon b{display:block;font-size:1.02rem}
+  .addon small{color:var(--text-muted);font-size:.88rem}
+  .addon .p{font-weight:800;white-space:nowrap;color:var(--accent-gold-hover)}
+  .addon .p s{color:var(--text-muted);font-weight:400;font-size:.85rem;margin-inline-start:.3rem}
+  input[type=checkbox],input[type=radio]{width:20px;height:20px;accent-color:var(--accent-gold)}
+  fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:.6rem}
+  legend{font-weight:700;margin-bottom:.6rem}
+  .pays{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+  .pay{display:flex;gap:.6rem;align-items:center;padding:.85rem 1rem;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);cursor:pointer}
+  .pay:has(input:checked){border-color:var(--accent-gold);background:rgba(233,185,73,.1)}
+  .pay small{display:block;color:var(--text-muted);font-size:.85rem;font-variant-numeric:tabular-nums}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+  @media (max-width:560px){.fields,.pays{grid-template-columns:1fr}.main{padding:1.2rem}}
+  .field{display:flex;flex-direction:column;gap:.35rem}
+  .field label{font-size:.9rem;font-weight:600;color:var(--text-muted)}
+  .field input{font:inherit;font-size:1rem;color:#fff;background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:.8rem .95rem}
+  .field input:focus{outline:2px solid var(--accent-gold);border-color:transparent}
+  .terms{display:flex;gap:.6rem;align-items:flex-start;font-size:.92rem;color:var(--text-primary)}
+  .err{margin:0;min-height:1.2em;color:#F87171;font-size:.9rem}
+  .cta{display:flex;justify-content:center;align-items:center;gap:.5rem;width:100%;border:0;cursor:pointer;font:inherit;font-size:1.1rem;font-weight:800;color:var(--text-on-gold);padding:1rem 1.2rem;border-radius:999px;background:linear-gradient(135deg,var(--accent-gold-hover),var(--accent-gold) 55%,var(--accent-gold-deep));box-shadow:0 10px 26px rgba(233,185,73,.32);text-decoration:none}
+  .cta:hover{filter:brightness(1.06)}
+  .trust{display:flex;flex-wrap:wrap;gap:.5rem 1.1rem;justify-content:center;color:var(--text-muted);font-size:.88rem}
+  .trust i{color:var(--success);margin-inline-end:.3rem}
+  .sum{padding:1.4rem;display:flex;flex-direction:column;gap:.75rem;position:sticky;top:1rem}
+  .sum h2{margin:0 0 .2rem;font-family:var(--font-display);font-size:1.3rem}
+  .row{display:flex;justify-content:space-between;gap:.8rem;font-size:.97rem;font-variant-numeric:tabular-nums}
+  .row s{color:var(--text-muted);margin-inline-end:.35rem}
+  .row.total{border-top:1px solid rgba(255,255,255,.12);padding-top:.8rem;font-size:1.2rem;font-weight:800}
+  .row.per{color:var(--text-muted);font-size:.9rem}
+  .clock{font-size:.9rem;color:var(--accent-gold-hover);font-weight:600;font-variant-numeric:tabular-nums}
+  /* demo "payment" screen */
+  .paid{max-width:620px;margin:1rem auto 0;padding:2rem 1.6rem;display:flex;flex-direction:column;gap:1rem;align-items:center;text-align:center}
+  .paid .ico{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:rgba(233,185,73,.14);color:var(--accent-gold-hover);font-size:2rem}
+  .paid .rows{width:100%;display:flex;flex-direction:column;gap:.6rem;text-align:right}
+  .paid .btns{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center}
+  .ghost{display:inline-flex;align-items:center;gap:.4rem;padding:.75rem 1.2rem;border-radius:999px;border:1px solid rgba(255,255,255,.22);color:#fff;text-decoration:none;font-weight:700}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="atmos" aria-hidden="true"><div class="atmos__base"></div></div>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="course-library.html#master-sales" aria-label="חזרה"><i class="fa-solid fa-arrow-right"></i></a>
+    <a class="brand" href="course-library.html"><img src="../assets/logo-square.png" alt=""><span>בית המטפלים</span></a>
+  </div>
+
+  <div id="coView" class="grid">
+    <form class="glass main" id="coForm" novalidate>
+      <h1 id="coTitle"></h1>
+      <p class="sub" id="coSub"></p>
+      <label class="addon" id="addonRow" for="addon">
+        <input type="checkbox" id="addon">
+        <span><b>להוסיף את השלמת הפרקטישנר ב-290 ₪</b><small>כל 312 התרגילים של קורס הפרקטישנר, במקום 390 ₪</small></span>
+        <span class="p">290 ₪<s>390</s></span>
+      </label>
+      <fieldset id="payFs">
+        <legend>איך נוח לכם לשלם?</legend>
+        <div class="pays">
+          <label class="pay" for="pay1"><input type="radio" name="pay" id="pay1" value="1" checked><span>תשלום אחד<small id="pay1Amt"></small></span></label>
+          <label class="pay" for="pay3"><input type="radio" name="pay" id="pay3" value="3"><span>3 תשלומים<small id="pay3Amt"></small></span></label>
+        </div>
+      </fieldset>
+      <div class="fields">
+        <div class="field"><label for="coName">שם מלא</label><input id="coName" autocomplete="name"></div>
+        <div class="field"><label for="coPhone">טלפון</label><input id="coPhone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="05X-XXXXXXX"></div>
+        <div class="field" style="grid-column:1/-1"><label for="coEmail">כתובת אימייל</label><input id="coEmail" type="email" autocomplete="email" dir="ltr"></div>
+      </div>
+      <label class="terms" for="coTerms"><input type="checkbox" id="coTerms"><span>קראתי ואני מסכים לתנאי הרכישה והשימוש</span></label>
+      <p class="err" id="coErr" role="alert"></p>
+      <button type="submit" class="cta"><i class="fa-solid fa-lock"></i> לתשלום מאובטח</button>
+      <div class="trust"><span><i class="fa-solid fa-shield-halved"></i>החזר כספי מלא תוך 14 יום</span><span><i class="fa-solid fa-bolt"></i>גישה מיידית</span><span><i class="fa-solid fa-lock"></i>תשלום מאובטח</span></div>
+    </form>
+    <aside class="glass sum" aria-label="סיכום הזמנה">
+      <h2>סיכום ההזמנה</h2>
+      <div id="sumRows"></div>
+      <p class="clock" id="sumClock"></p>
+    </aside>
+  </div>
+
+  <div id="paidView" class="glass paid" hidden>
+    <div class="ico"><i class="fa-solid fa-credit-card"></i></div>
+    <h1>הדגמה, כאן יהיה התשלום</h1>
+    <p class="sub">בגרסה האמיתית כאן נפתח דף הסליקה. אחרי התשלום הגישה נפתחת אוטומטית, בלי שאף אחד צריך לגעת בזה.</p>
+    <div class="rows" id="paidRows"></div>
+    <div class="btns">
+      <a class="ghost" href="course-library.html#master-sales"><i class="fa-solid fa-arrow-right"></i> חזרה להצעות</a>
+      <a class="ghost" href="course-library.html#m1l1"><i class="fa-solid fa-play"></i> חזרה לשיעורים</a>
+    </div>
+  </div>
+</div>
+
+<script src="../js/demo-ui.js"></script>
+<script>
+(function(){
+  var P = { master: 1900, masterOld: 6200, prac: 390, addon: 290 };
+  var kind = new URLSearchParams(location.search).get('p') === 'practitioner' ? 'practitioner' : 'master';
+  var $ = function(s){ return document.querySelector(s); };
+  var ils = function(n){ return n.toLocaleString('he-IL', { maximumFractionDigits: 2 }) + ' ₪'; };
+  function get(k){ try { return localStorage.getItem('bvmdemo_' + k); } catch(_) { return null; } }
+
+  $('#coTitle').innerHTML = kind === 'master' ? 'הצטרפות לקורס <span class="gold"><bdi>NLP MASTER</bdi></span>' : '<span class="gold">השלמת הפרקטישנר</span>';
+  $('#coSub').textContent = kind === 'master'
+    ? 'זו רמה אחרת של עומק, תוכן ופרקטיקה. גישה מיידית אחרי התשלום.'
+    : 'כל 312 התרגילים של הקורס שכבר התחלתם. נפתחים מתחת לכל שיעור מיד אחרי התשלום.';
+  document.title = (kind === 'master' ? 'NLP MASTER' : 'השלמת הפרקטישנר') + ' | תשלום | בית המטפלים';
+  $('#addonRow').hidden = kind !== 'master';
+  $('#payFs').hidden = kind !== 'master';
+  if (get('name')) $('#coName').value = get('name');
+  if (get('email')) $('#coEmail').value = get('email');
+
+  function total(){ return kind === 'master' ? P.master + ($('#addon').checked ? P.addon : 0) : P.prac; }
+  function nPay(){ return kind === 'master' && $('#pay3').checked ? 3 : 1; }
+  function rows(){
+    var r = [];
+    if (kind === 'master') {
+      r.push('<div class="row"><span>קורס <bdi>NLP MASTER</bdi></span><span><s>' + ils(P.masterOld) + '</s>' + ils(P.master) + '</span></div>');
+      if ($('#addon').checked) r.push('<div class="row"><span>השלמת הפרקטישנר</span><span><s>' + ils(P.prac) + '</s>' + ils(P.addon) + '</span></div>');
+    } else r.push('<div class="row"><span>השלמת הפרקטישנר</span><span>' + ils(P.prac) + '</span></div>');
+    var t = total();
+    r.push('<div class="row total"><span>סה״כ</span><span>' + ils(t) + '</span></div>');
+    if (nPay() === 3) r.push('<div class="row per"><span>3 תשלומים</span><span>' + ils(Math.round(t / 3 * 100) / 100) + ' בחודש</span></div>');
+    return r.join('');
+  }
+  function update(){
+    var t = total();
+    $('#pay1Amt').textContent = ils(t);
+    $('#pay3Amt').textContent = '3 × ' + ils(Math.round(t / 3 * 100) / 100);
+    $('#sumRows').innerHTML = rows();
+  }
+  ['#addon', '#pay1', '#pay3'].forEach(function(s){ $(s).addEventListener('change', update); });
+  update();
+
+  function clock(){
+    var r = window.DemoTimer && window.DemoTimer.remaining();
+    if (r === null || r === undefined) { $('#sumClock').textContent = ''; return; }
+    var p = window.DemoTimer.parts(r), pad = function(n){ return String(n).padStart(2, '0'); };
+    $('#sumClock').textContent = r > 0 ? ('המחיר שמור לך עוד ' + p.d + ' ימים ' + pad(p.h) + ':' + pad(p.m) + ':' + pad(p.s)) : 'ההצעה האישית הסתיימה';
+  }
+  clock(); setInterval(clock, 1000);
+
+  $('#coForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!$('#coName').value.trim()) { $('#coErr').textContent = 'חסר שם מלא.'; $('#coName').focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('#coEmail').value.trim())) { $('#coErr').textContent = 'כתובת המייל לא נראית תקינה. בדקו שיש בה @ ונקודה.'; $('#coEmail').focus(); return; }
+    if (!$('#coTerms').checked) { $('#coErr').textContent = 'צריך לאשר את תנאי הרכישה כדי להמשיך.'; return; }
+    $('#paidRows').innerHTML = rows();
+    $('#coView').hidden = true; $('#paidView').hidden = false;
+    scrollTo(0, 0);
+  });
+})();
+</script>
+</body>
+</html>

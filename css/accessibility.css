@@ -1,0 +1,153 @@
+/* ==========================================================================
+   Accessibility — WCAG 2.4.7 Focus Indicators + Inline Validation
+   ========================================================================== */
+
+/* Focus indicators */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--t-gold, #D4AF37);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--t-gold-glow, rgba(212, 175, 55, 0.25));
+}
+
+/* Inline validation error states */
+.field-error {
+    border-color: #FF6F61 !important;
+    box-shadow: 0 0 0 3px rgba(255, 111, 97, 0.2) !important;
+}
+
+.field-success {
+    border-color: #4CAF50 !important;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2) !important;
+}
+
+.error-msg {
+    display: none;
+    color: #FF6F61;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    font-weight: 500;
+}
+
+.error-msg.show {
+    display: block;
+}
+
+/* Skip to content */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: var(--t-gold, #D4AF37);
+    color: var(--t-deep-petrol, #003B46);
+    padding: 8px 16px;
+    z-index: 10000;
+    font-weight: 700;
+    border-radius: 0 0 8px 8px;
+    transition: top 0.2s;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Minimal form-page navigation bar */
+.form-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: var(--t-deep-petrol, #003B46);
+    color: white;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.85rem;
+}
+
+.form-nav a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+}
+
+.form-nav a:hover {
+    color: var(--t-gold, #D4AF37);
+}
+
+.form-nav .form-nav-logo {
+    color: var(--t-gold, #D4AF37);
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* Breadcrumb for multi-step flows */
+.form-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    background: var(--t-frost-white, #E8F1F2);
+    font-size: 0.8rem;
+    color: var(--t-muted-teal, #00606B);
+    font-family: 'Heebo', sans-serif;
+}
+
+.form-breadcrumb a {
+    color: var(--t-deep-petrol, #003B46);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.form-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.form-breadcrumb .separator {
+    color: var(--t-dusty-aqua, #2F8592);
+}
+
+.form-breadcrumb .current {
+    font-weight: 600;
+    color: var(--t-deep-petrol, #003B46);
+}
+
+/* ===== Touch Targets (WCAG 2.5.8 — minimum 44×44px) ===== */
+@media (pointer: coarse) {
+    button,
+    [type="submit"],
+    [type="button"],
+    a.btn,
+    .btn,
+    .checkbox-group,
+    .checkbox-item {
+        min-height: 44px;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+        min-width: 20px;
+        min-height: 20px;
+    }
+}
+
+/* ===== Reduced Motion ===== */
+@media (prefers-reduced-motion: reduce) {
+    .particles,
+    .particle {
+        display: none !important;
+    }
+}
+
+/* ===== Unified Border-Radius Tokens ===== */
+:root {
+    --radius-btn: 10px;
+    --radius-card: 12px;
+    --radius-modal: 16px;
+    --radius-pill: 50px;
+}
